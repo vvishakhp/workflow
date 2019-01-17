@@ -1,0 +1,26 @@
+.graph {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+
+  svg {
+    background-color: white;
+    display: inherit;
+    margin: auto;
+  }
+}
+
+.navable {
+  overflow: auto;
+  display: block;
+  align-items: center;
+  justify-content: center;
+  background-color: gray;
+
+  height: 500px;
+}
+
+.root {
+  display: block;
+  overflow: auto;
+}
