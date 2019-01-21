@@ -3,6 +3,7 @@ import { CanvasViewService } from './canvas/services/canvasView.service';
 import { Rectangle, Point } from './canvas/models/rectangle';
 import { RectangleUIElement } from './canvas/models/rectangleUIElement';
 import { SimpleActivityUIElement } from './canvas/models/simpleActivityUIElement';
+import { delay } from 'q';
 
 @Component({
   selector: 'app-root',
@@ -28,11 +29,19 @@ export class AppComponent {
       this.canvasView.addItem(rect);
     });
 
-    rectangles.forEach(source => {
-      rectangles.forEach(dest => {
-        this.canvasView.addEdge(source, dest);
-      });
-    });
+    const edge = this.canvasView.addEdge(rectangles[0], rectangles[0]);
+
+    for (const source of rectangles) {
+      for (const dest of rectangles) {
+        if (source !== dest) {
+          // await delay(1000);
+          debugger;
+          edge.fromVertex = source;
+          edge.toVertex = dest;
+          edge.updateAttr();
+        }
+      }
+    }
   }
 
   private createRectangle(point: Point, label: string): SimpleActivityUIElement {

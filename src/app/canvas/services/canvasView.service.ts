@@ -45,38 +45,11 @@ export class CanvasViewService {
         });
     }
 
-    public addEdge(from: SimpleActivityUIElement, to: SimpleActivityUIElement, outboundConnectionSlot: number = 0) {
-        const edgeItem: EdgeUIElement = new EdgeUIElement();
-        const fromEdge = from.getOutboundVertex(outboundConnectionSlot);
-        const toEdge = to.getInboundVertex();
-
-        edgeItem.addPoint(fromEdge.point);
-        const p1 = this.movePoint(fromEdge.direction, fromEdge.point);
-        const p2 = this.movePoint(toEdge.direction, toEdge.point);
-        edgeItem.addPoint(p1);
-        let _p1: Point, _p2: Point;
-        if (p1.x <= p2.x) {
-
-        } else {
-
-        }
-
-        edgeItem.addPoint(new Point(p1.x, p2.y));
-
-        edgeItem.addPoint(p2);
-        edgeItem.addPoint(toEdge.point);
-
-        edgeItem.updateAttr();
-
+    public addEdge(from: SimpleActivityUIElement, to: SimpleActivityUIElement, outboundConnectionSlot: number = 0): EdgeUIElement {
+        const edgeItem: EdgeUIElement = new EdgeUIElement(from, to, outboundConnectionSlot);
         this.items.add(edgeItem);
         this.itemEvent.next({ type: ListEventType.ITEM_ADDED, item: edgeItem });
-    }
-
-    private movePoint(type: ExtrudeDirection, point: Point, length: number = 20): Point {
-        const p = point.clone();
-        p.x += (type === '+h') ? length : ((type === '-h') ? -length : 0);
-        p.y += (type === '+v') ? length : ((type === '-v') ? -length : 0);
-        return p;
+        return edgeItem;
     }
 }
 
