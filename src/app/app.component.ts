@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { CanvasViewService } from './canvas/services/canvasView.service';
-import { Rectangle, Point } from './canvas/models/rectangle';
-import { RectangleUIElement } from './canvas/models/rectangleUIElement';
-import { SimpleActivityUIElement } from './canvas/models/simpleActivityUIElement';
 import { delay } from 'q';
+import { CanvasModelService, ActivityViewItem } from './canvas/services/canvasModel.service';
+import { SvgUIElement } from './canvas/models/SvgUIElement';
+import { Rectangle, Point } from './canvas/models/rectangle';
+import { SimpleActivityUIElement } from './canvas/models/simpleActivityUIElement';
 
 @Component({
   selector: 'app-root',
@@ -13,50 +13,74 @@ import { delay } from 'q';
 export class AppComponent {
   title = 'workflow';
 
-  constructor(private canvasView: CanvasViewService) {
+  constructor(private canvasModel: CanvasModelService) {
+
+
+    this.addRegistryItems();
+
     this.addItems();
   }
 
   private async addItems() {
-    await this.delay(2000);
-    const rectangles: SimpleActivityUIElement[] = [];
-
-    rectangles.push(this.createRectangle(new Point(100, 100), 'One'));
-    rectangles.push(this.createRectangle(new Point(100, 300), 'Two'));
-    rectangles.push(this.createRectangle(new Point(300, 100), 'Three'));
-    rectangles.push(this.createRectangle(new Point(300, 300), 'Four'));
-    rectangles.forEach(rect => {
-      this.canvasView.addItem(rect);
-    });
-
-    const edge = this.canvasView.addEdge(rectangles[0], rectangles[0]);
-
-    for (const source of rectangles) {
-      for (const dest of rectangles) {
-        if (source !== dest) {
-          // await delay(1000);
-          debugger;
-          edge.fromVertex = source;
-          edge.toVertex = dest;
-          edge.updateAttr();
-        }
-      }
-    }
+    await delay(500);
+    let startId: string;
+    let id = id1 = this.canvasModel.addActivity('start', null, 0);
+    id = this.canvasModel.addActivity('simple_box', id1, 1);
+    id = this.canvasModel.addActivity('simple_box', id, 1);
+    id = this.canvasModel.addActivity('start', id, 1);
+    id = this.canvasModel.addActivity('start', id, 1);
   }
 
-  private createRectangle(point: Point, label: string): SimpleActivityUIElement {
-    const rectangle = new SimpleActivityUIElement(new Rectangle(point.x, point.y, 50, 120));
-    rectangle.setLabel(label);
-    rectangle.setInboundVertext(new Point(0, -1), '-v');
-    rectangle.setOutboundVertices({ point: new Point(0, 1), direction: '+v' });
-    return rectangle;
-  }
+
 
   async delay(duration: number) {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve();
       }, duration);
+    });
+  }
+
+  public addRegistryItems() {
+    this.canvasModel.addActivityType('start', (xIndex: number, yIndex: number): ActivityViewItem => {
+      const item = new ActivityViewItem();
+      item.xIndex = xIndex;
+      item.yIndex = yIndex;
+      item.id = ActivityViewItem.newId();
+
+      item.children = [null];
+      item.numSlots = 1;
+      item.ui = new SvgUIElement('start.icon.svg',
+        new Rectangle(this.canvasModel.xPadding + (item.xIndex * 200),
+          this.canvasModel.yPadding + (item.yIndex * 100), 50, 50));
+      item.ui.setOutboundVertices({ point: new Point(0, 1), direction: '+v' });
+      item.ui.setInboundVertex(new Point(0, -1), '-v');
+      return item;
+    });
+
+    this.canvasModel.addActivityType('simple_box', (xIndex, yIndex) => {
+      const item = new ActivityViewItem();
+      item.xIndex = xIndex; item.yIndex = yIndex;
+      item.id = ActivityViewItem.newId();
+
+      item.children = [null];
+      item.numSlots = 1;
+
+      item.ui = new SimpleActivityUIElement(
+        new Rectangle(this.canvasModel.xPadding + (item.xIndex * 200),
+          this.canvasModel.yPadding + (item.yIndex * 100), 50, 120), true);
+
+      item.ui.setLabel('Simple Box');
+
+      item.ui.setOutboundVertices({ point: new Point(0, 1), direction: '+v' });
+      item.ui.setInboundVertex(new Point(0, -1), '-v');
+      return item;
+    });
+
+    this.canvasModel.addActivityType('stop', (xIndex, yIndex) => {
+      const item = new ActivityViewItem();
+
+      return item;
     });
   }
 }

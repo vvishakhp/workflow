@@ -11,12 +11,13 @@ export class SimpleActivityUIElement extends RectangleUIElement {
 
     private labelElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 
-    public constructor(public rectangle: Rectangle, drawRectangle = true) {
+    public constructor(public rectangle: Rectangle, drawRectangle = true, updateSelf = true) {
         super(rectangle, drawRectangle);
-        this.updateAttr();
-        this.updateStyle();
-
         this.element.appendChild(this.labelElement);
+        if (updateSelf) {
+            this.updateAttr();
+            this.updateStyle();
+        }
     }
 
     private calcRatoPoint(ratioPoint: Point): Point {
@@ -31,7 +32,7 @@ export class SimpleActivityUIElement extends RectangleUIElement {
         return new Point(x, y);
     }
 
-    public setInboundVertext(ratioPoint: Point, extrudeDirection: ExtrudeDirection = '+v') {
+    public setInboundVertex(ratioPoint: Point, extrudeDirection: ExtrudeDirection = '+v') {
         this.inboundVertex.point = this.calcRatoPoint(ratioPoint);
     }
 

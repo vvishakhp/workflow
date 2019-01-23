@@ -1,9 +1,11 @@
 <div class="root">
-  <h2>Graph - {{graphName}}</h2>
+  <h2>Graph</h2>
 
   <div class="graph">
     <div class="navable">
-      <svg [attr.height]="graphHeight" [attr.width]="graphWidth" #svg_element>
+      <svg [attr.height]="graphHeight" [attr.width]="graphWidth" #svg_element 
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
           <marker id="triangle" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="strokeWidth" markerWidth="10"
             markerHeight="10" orient="auto">

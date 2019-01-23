@@ -8,9 +8,7 @@ import { CanvasViewService } from './services/canvasView.service';
   imports: [
     CommonModule
   ],
-  providers: [
-    CanvasViewService
-  ],
+  providers: [],
   exports: [CanvasViewComponent]
 })
 export class CanvasModule { }
